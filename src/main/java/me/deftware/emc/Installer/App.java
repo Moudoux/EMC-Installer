@@ -8,10 +8,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
@@ -26,7 +28,7 @@ import me.deftware.emc.Installer.Patch.JBPatch;
 
 public class App {
 	
-	public static String mcVersion = "1.12", clientName = "EMC_" + mcVersion;
+	public static String mcVersion = "1.12", clientName = "EMC_" + mcVersion, targetPatch = mcVersion + "-1.patch";
 
 	public static void log(String message) {
 		System.out.println("Installer >> " + message);
@@ -53,6 +55,7 @@ public class App {
 
 			mcVersion = jsonObject.get("mc_vesion").getAsString();
 			clientName = jsonObject.get("name").getAsString() + "_" + mcVersion;
+			targetPatch = jsonObject.get("patch").getAsString();
 
 			if (mcVersion.equals("") || clientName.equals("")) {
 				throw new Exception("Invalid json values");
@@ -113,8 +116,10 @@ public class App {
 		App.copyFile(minecraft, clientFile);
 		// Apply patch
 		File pFile = new File(clientDir.getAbsolutePath() + File.separator + "emc.patch");
-		if (!App.extractAsset("/assets/emc.patch", pFile)) {
-			error("Failed to extract patch");
+		try {
+			getPatch(pFile);
+		} catch (Throwable t) {
+			error("Could not get patch. " + t.getMessage());
 		}
 		log("Patching...");
 		App.applyPatch(clientFile, pFile, new File(clientDir.getAbsolutePath() + File.separator + clientName + ".jar"));
@@ -194,6 +199,11 @@ public class App {
 		} catch (Exception ex) {
 			return false;
 		}
+	}
+	
+	public static void getPatch(File output) throws IOException {
+		URL url = new URL("https://github.com/Moudoux/EMC-Installer/blob/master/Patches/" + targetPatch + "?raw=true");
+		FileUtils.copyURLToFile(url, output);
 	}
 
 	public static File getMinecraft() {
