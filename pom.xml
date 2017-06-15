@@ -2,13 +2,36 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>me.deftware.ecm</groupId>
-	<artifactId>Installer</artifactId>
+	<groupId>me.deftware</groupId>
+	<artifactId>EMC-Installer</artifactId>
 	<version>1.0</version>
-	<packaging>jar</packaging>
+	<name>me.deftware:EMC-Installer</name>
+	<url>https://github.com/Moudoux/EMC-Installer</url>
 
-	<name>Installer</name>
-	<url>http://maven.apache.org</url>
+	<scm>
+		<connection>scm:git:https://github.com/Moudoux/EMC-Installer.git</connection>
+		<developerConnection>scm:git:https://github.com/Moudoux/EMC-Installer.git</developerConnection>
+		<url>https://github.com/Moudoux/EMC-Installer</url>
+	</scm>
+	
+	<licenses>
+		<license>
+			<name>GPL-3.0</name>
+			<url>https://www.gnu.org/licenses/gpl.txt</url>
+		</license>
+	</licenses>
+	
+	<developers>
+		<developer>
+			<name>Deftware</name>
+			<organization>OpenTexon</organization>
+			<organizationUrl>https://opentexon.com/</organizationUrl>
+			<roles>
+				<role>Project Lead</role>
+			</roles>
+			<timezone>-1</timezone>
+		</developer>
+	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,7 +56,6 @@
 		</dependency>
 	</dependencies>
 
-
 	<build>
 		<plugins>
 			<plugin>
@@ -57,6 +79,17 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
