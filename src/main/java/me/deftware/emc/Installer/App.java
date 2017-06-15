@@ -38,6 +38,7 @@ public class App {
 
 	public static void error(String message) {
 		log(message);
+		errorBox(message, "Install failed");
 		System.exit(0);
 	}
 
@@ -98,6 +99,12 @@ public class App {
 			}
 		} else {
 			log("Installing EMC...");
+			new Thread() {
+				@Override
+				public void run() {
+					infoBox("Installing " + name + "...", "Installing...");
+				}
+			}.start();
 			install();
 		}
 	}
@@ -158,6 +165,7 @@ public class App {
 		log("Done");
 		infoBox(name + " was successfully installed, open your Minecraft launcher and select \"release " + clientName
 				+ "\"", "Installation done");
+		System.exit(0);
 	}
 
 	/*
@@ -245,6 +253,10 @@ public class App {
 
 	public static void infoBox(String infoMessage, String titleBar) {
 		JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public static void errorBox(String infoMessage, String titleBar) {
+		JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.ERROR_MESSAGE);
 	}
 
 	/*
