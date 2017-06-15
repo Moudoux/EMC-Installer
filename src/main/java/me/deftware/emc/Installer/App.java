@@ -28,7 +28,7 @@ import me.deftware.emc.Installer.Patch.JBPatch;
 
 public class App {
 	
-	public static String mcVersion = "1.12", clientName = "EMC_" + mcVersion, targetPatch = mcVersion + "-1.patch";
+	public static String mcVersion = "", clientName = "", targetPatch = "";
 
 	public static void log(String message) {
 		System.out.println("Installer >> " + message);
@@ -57,7 +57,7 @@ public class App {
 			clientName = jsonObject.get("name").getAsString() + "_" + mcVersion;
 			targetPatch = jsonObject.get("patch").getAsString();
 
-			if (mcVersion.equals("") || clientName.equals("")) {
+			if (mcVersion.equals("") || clientName.equals("") || targetPatch.equals("")) {
 				throw new Exception("Invalid json values");
 			}
 
