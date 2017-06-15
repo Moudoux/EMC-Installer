@@ -23,8 +23,8 @@ To install a mod made for [EMC framework](https://github.com/Moudoux/EMC) simply
 Building
 -------------------
 
-Compile the code with all dependencies, open the jar, create a folder called `assets`, in the assets add your
-patch file, and your `Client.jar` (Optional)
+Open the EMC.json file and set Minecraft versoin and patch file (<MCVersion>-<Patch Revision>.patch)
+Compile the code with all dependencies, open the jar, create a folder called `assets`, in the assets add your `Client.jar` jar (Optional)
 
 Making the patch file
 -------------------
