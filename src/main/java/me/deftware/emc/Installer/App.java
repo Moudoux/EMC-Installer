@@ -1,9 +1,11 @@
 package me.deftware.emc.Installer;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +26,7 @@ import me.deftware.emc.Installer.Patch.JBPatch;
 
 public class App {
 	
-	public static final String mcVersion = "1.12", clientName = "EMC_" + mcVersion;
+	public static String mcVersion = "1.12", clientName = "EMC_" + mcVersion;
 
 	public static void log(String message) {
 		System.out.println("Installer >> " + message);
@@ -36,6 +38,30 @@ public class App {
 	}
 
 	public static void main(String[] args) {
+		try {
+			InputStream in = App.class.getResourceAsStream("/EMC.json");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			StringBuilder result = new StringBuilder("");
+
+			String line;
+			while ((line = reader.readLine()) != null) {
+				result.append(line);
+			}
+			in.close();
+
+			JsonObject jsonObject = new Gson().fromJson(result.toString(), JsonObject.class);
+
+			mcVersion = jsonObject.get("mc_vesion").getAsString();
+			clientName = jsonObject.get("name").getAsString() + "_" + mcVersion;
+
+			if (mcVersion.equals("") || clientName.equals("")) {
+				throw new Exception("Invalid json values");
+			}
+
+			log(jsonObject.get("name").getAsString() + " installer for Minecraft " + mcVersion);
+		} catch (Exception ex) {
+			error("Failed to read installer config");
+		}
 		if (args.length != 0) {
 			if (args[0].equals("-g") || args[0].equals("--gen")) {
 				if (args.length != 4) {
@@ -65,6 +91,7 @@ public class App {
 				error("Unknown action \"" + args[0] + "\"");
 			}
 		} else {
+			log("Installing EMC...");
 			install();
 		}
 	}
@@ -77,6 +104,7 @@ public class App {
 		// Copy Minecraft jar
 		File clientDir = new File(
 				minecraft.getParent().replace(File.separatorChar + mcVersion, File.separator + clientName));
+		// Delete existing EMC install
 		if (clientDir.exists()) {
 			clientDir.delete();
 		}
@@ -88,11 +116,13 @@ public class App {
 		if (!App.extractAsset("/assets/emc.patch", pFile)) {
 			error("Failed to extract patch");
 		}
+		log("Patching...");
 		App.applyPatch(clientFile, pFile, new File(clientDir.getAbsolutePath() + File.separator + clientName + ".jar"));
 		// Delete files
 		clientFile.delete();
 		pFile.delete();
 		// Copy json
+		log("Copying json...");
 		File json = new File(minecraft.getParent() + File.separator + mcVersion + ".json");
 		if (!json.exists()) {
 			error("Could not find \"" + mcVersion + ".json\"");
@@ -114,7 +144,9 @@ public class App {
 		saveJson(jsonObject.toString(), clientFile);
 		// Optional: Install Client.jar
 		clientFile = new File(clientDir.getAbsolutePath() + File.separator + "Client.jar");
+		log("Extracting assets....");
 		App.extractAsset("/assets/Client.jar", clientFile);
+		log("Done");
 	}
 
 	/*
@@ -183,8 +215,6 @@ public class App {
 		}
 		if (!minecraft.exists()) {
 			error("Could not find Minecraft " + mcVersion + " in versions, is it installed ?");
-		} else {
-			log("Minecraft " + mcVersion + " jar: " + minecraft.getAbsolutePath());
 		}
 		return minecraft;
 	}
@@ -215,7 +245,6 @@ public class App {
 	public static void applyPatch(File minecraft, File patchFile, File output) {
 		try {
 			JBPatch.bspatch(minecraft, output, patchFile);
-			log("Done, file saved to " + output.getAbsolutePath());
 		} catch (Exception ex) {
 			log("Failed to apply patch file");
 			ex.printStackTrace();
