@@ -9,10 +9,7 @@ public class OSUtils {
 	}
 
 	public static boolean isMac() {
-		if ((OS.indexOf("darwin") >= 0) || (OS.indexOf("mac") >= 0)) {
-			return true;
-		}
-		return false;
+		return (OS.indexOf("darwin") >= 0) || (OS.indexOf("mac") >= 0);
 	}
 
 	public static boolean isLinux() {
