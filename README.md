@@ -1,13 +1,19 @@
 The EMC (Easy Minecraft Client) Framework installer
 ===================
 
-This is a installer for the EMC framework
+This is a installer for the [EMC framework](https://github.com/Moudoux/EMC)
 
-Running
+Using the installer
 -------------------
 
-To install EMC simply download the latest version of this installer from releases.
-Run it with `java -jar Installer.jar`
+To install EMC simply [download the latest version of this installer](https://github.com/Moudoux/EMC-Installer/releases).
+Run it with `java -jar Installer.jar`, after that open your Minecraft launcher and select `release EMC_1.12`.
+
+Installing a mod
+-------------------
+
+To install a mod made for [EMC framework](https://github.com/Moudoux/EMC) simply drag and drop the `Client.jar` file in 
+`.minecraft/versions/EMC_1.12/`. The client must be named `Client.jar`.
 
 Building
 -------------------
