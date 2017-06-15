@@ -1,0 +1,226 @@
+package me.deftware.emc.Installer;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
+import me.deftware.emc.Installer.Patch.JBDiff;
+import me.deftware.emc.Installer.Patch.JBPatch;
+
+public class App {
+	
+	public static final String mcVersion = "1.12", clientName = "EMC_" + mcVersion;
+
+	public static void log(String message) {
+		System.out.println("Installer >> " + message);
+	}
+
+	public static void error(String message) {
+		log(message);
+		System.exit(0);
+	}
+
+	public static void main(String[] args) {
+		if (args.length != 0) {
+			if (args[0].equals("-g") || args[0].equals("--gen")) {
+				if (args.length != 4) {
+					error("Invalid syntax, please use \"--gen <Source> <Modified File> <Output>\"");
+				}
+				File original = new File(args[1]);
+				File modified = new File(args[2]);
+				File output = new File(args[3]);
+				if (!original.exists() || !modified.exists()) {
+					error("Could not find files");
+				}
+				log("Generating patch file...");
+				App.genPatch(original, modified, output);
+			} else if (args[0].equals("-a") || args[0].equals("--apply")) {
+				if (args.length != 4) {
+					error("Invalid syntax, please use \"--apply <Source> <Patch file> <Output>\"");
+				}
+				File original = new File(args[1]);
+				File patchfile = new File(args[2]);
+				File output = new File(args[3]);
+				if (!original.exists() || !patchfile.exists()) {
+					error("Could not find files");
+				}
+				log("Applying patch file...");
+				App.applyPatch(original, patchfile, output);
+			} else {
+				error("Unknown action \"" + args[0] + "\"");
+			}
+		} else {
+			install();
+		}
+	}
+
+	/**
+	 * Installs EMC
+	 */
+	public static void install() {
+		File minecraft = getMinecraft();
+		// Copy Minecraft jar
+		File clientDir = new File(
+				minecraft.getParent().replace(File.separatorChar + mcVersion, File.separator + clientName));
+		if (clientDir.exists()) {
+			clientDir.delete();
+		}
+		clientDir.mkdir();
+		File clientFile = new File(clientDir.getAbsolutePath() + File.separator + mcVersion + ".jar");
+		App.copyFile(minecraft, clientFile);
+		// Apply patch
+		File pFile = new File(clientDir.getAbsolutePath() + File.separator + "emc.patch");
+		if (!App.extractAsset("/assets/emc.patch", pFile)) {
+			error("Failed to extract patch");
+		}
+		App.applyPatch(clientFile, pFile, new File(clientDir.getAbsolutePath() + File.separator + clientName + ".jar"));
+		// Delete files
+		clientFile.delete();
+		pFile.delete();
+		// Copy json
+		File json = new File(minecraft.getParent() + File.separator + mcVersion + ".json");
+		if (!json.exists()) {
+			error("Could not find \"" + mcVersion + ".json\"");
+		}
+		clientFile = new File(clientDir.getAbsolutePath() + File.separator + clientName + ".json");
+		App.copyFile(json, clientFile);
+		// Edit json
+		JsonObject jsonObject = new Gson().fromJson(readFile(clientFile), JsonObject.class);
+		if (!jsonObject.has("id")) {
+			error("Invalid json file");
+		}
+		// Update id
+		jsonObject.remove("id");
+		jsonObject.add("id", new JsonPrimitive(clientName));
+		// Remove things
+		jsonObject.remove("logging");
+		jsonObject.remove("downloads");
+		// Save
+		saveJson(jsonObject.toString(), clientFile);
+		// Optional: Install Client.jar
+		clientFile = new File(clientDir.getAbsolutePath() + File.separator + "Client.jar");
+		App.extractAsset("/assets/Client.jar", clientFile);
+	}
+
+	/*
+	 * Tools
+	 */
+
+	public synchronized static void saveJson(String jsonContent, File to) {
+		try {
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			JsonParser jp = new JsonParser();
+			JsonElement je = jp.parse(jsonContent);
+			jsonContent = gson.toJson(je);
+			PrintWriter writer = new PrintWriter(to, "UTF-8");
+			writer.println(jsonContent);
+			writer.close();
+		} catch (Exception ex) {
+			error("Failed to save json");
+		}
+	}
+
+	public static synchronized String readFile(File file) {
+		try {
+			String output = "";
+			for (String s : Files.readAllLines(file.toPath(), StandardCharsets.UTF_8)) {
+				output += s;
+			}
+			return output;
+		} catch (Exception ex) {
+			error("Failed to read file");
+		}
+		return null;
+	}
+
+	public static boolean extractAsset(String asset, File output) {
+		try {
+			if (output.exists()) {
+				output.delete();
+			}
+			InputStream in = App.class.getResourceAsStream(asset);
+			OutputStream out = new FileOutputStream(output);
+			IOUtils.copy(in, out);
+			in.close();
+			out.close();
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
+	}
+
+	public static File getMinecraft() {
+		log("Locating Minecraft " + mcVersion + "...");
+		File minecraft = null;
+		if (OSUtils.isWindows()) {
+			minecraft = new File(System.getenv("APPDATA") + File.separator + ".minecraft" + File.separator + "versions"
+					+ File.separator + mcVersion + File.separator + mcVersion + ".jar");
+		} else if (OSUtils.isLinux()) {
+			minecraft = new File(System.getProperty("user.home") + File.separator + ".minecraft" + File.separator
+					+ "versions" + File.separator + mcVersion + File.separator + mcVersion + ".jar");
+		} else if (OSUtils.isMac()) {
+			minecraft = new File(System.getProperty("user.home") + File.separator + "Library" + File.separator
+					+ "Application Support" + File.separator + "minecraft" + File.separator + "versions"
+					+ File.separator + mcVersion
+					+ File.separator + mcVersion + ".jar");
+		} else {
+			error("Unsupported OS, please use Windows, macOS or Linux");
+		}
+		if (!minecraft.exists()) {
+			error("Could not find Minecraft " + mcVersion + " in versions, is it installed ?");
+		} else {
+			log("Minecraft " + mcVersion + " jar: " + minecraft.getAbsolutePath());
+		}
+		return minecraft;
+	}
+
+	public static void copyFile(File one, File two) {
+		try {
+			Files.copy(one.toPath(), two.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			error("Failed to copy files");
+		}
+	}
+
+	/*
+	 * Patching/Gen
+	 */
+	
+	public static void genPatch(File minecraft, File modifiedMinecraft, File output) {
+		try {
+			JBDiff.bsdiff(minecraft, modifiedMinecraft, output);
+			log("Done, file saved to " + output.getAbsolutePath());
+		} catch (Exception ex) {
+			log("Failed to generate patch file");
+			ex.printStackTrace();
+			System.exit(0);
+		}
+	}
+
+	public static void applyPatch(File minecraft, File patchFile, File output) {
+		try {
+			JBPatch.bspatch(minecraft, output, patchFile);
+			log("Done, file saved to " + output.getAbsolutePath());
+		} catch (Exception ex) {
+			log("Failed to apply patch file");
+			ex.printStackTrace();
+			System.exit(0);
+		}
+	}
+
+}

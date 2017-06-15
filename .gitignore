@@ -1,0 +1,5 @@
+# Exclude binaries/configs
+target/
+.settings/
+.classpath
+.project
