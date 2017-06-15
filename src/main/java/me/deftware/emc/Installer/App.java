@@ -13,6 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -28,7 +30,7 @@ import me.deftware.emc.Installer.Patch.JBPatch;
 
 public class App {
 	
-	public static String mcVersion = "", clientName = "", targetPatch = "";
+	public static String name = "", mcVersion = "", clientName = "", targetPatch = "";
 
 	public static void log(String message) {
 		System.out.println("Installer >> " + message);
@@ -53,11 +55,12 @@ public class App {
 
 			JsonObject jsonObject = new Gson().fromJson(result.toString(), JsonObject.class);
 
+			name = jsonObject.get("name").getAsString();
 			mcVersion = jsonObject.get("mc_vesion").getAsString();
 			clientName = jsonObject.get("name").getAsString() + "_" + mcVersion;
 			targetPatch = jsonObject.get("patch").getAsString();
 
-			if (mcVersion.equals("") || clientName.equals("") || targetPatch.equals("")) {
+			if (mcVersion.equals("") || clientName.equals("") || targetPatch.equals("") || name.equals("")) {
 				throw new Exception("Invalid json values");
 			}
 
@@ -116,6 +119,7 @@ public class App {
 		App.copyFile(minecraft, clientFile);
 		// Apply patch
 		File pFile = new File(clientDir.getAbsolutePath() + File.separator + "emc.patch");
+		log("Downloading patch...");
 		try {
 			getPatch(pFile);
 		} catch (Throwable t) {
@@ -152,6 +156,8 @@ public class App {
 		log("Extracting assets....");
 		App.extractAsset("/assets/Client.jar", clientFile);
 		log("Done");
+		infoBox(name + " was successfully installed, open your Minecraft launcher and select \"release " + clientName
+				+ "\"", "Installation done");
 	}
 
 	/*
@@ -235,6 +241,10 @@ public class App {
 		} catch (IOException e) {
 			error("Failed to copy files");
 		}
+	}
+
+	public static void infoBox(String infoMessage, String titleBar) {
+		JOptionPane.showMessageDialog(null, infoMessage, "InfoBox: " + titleBar, JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/*
