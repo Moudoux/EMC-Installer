@@ -9,6 +9,11 @@ Using the installer
 To install EMC simply [download the latest version of this installer](https://github.com/Moudoux/EMC-Installer/releases).
 Run it with `java -jar Installer.jar`, after that open your Minecraft launcher and select `release EMC_1.12`.
 
+Making sure the installation was successful
+-------------------
+
+You can type `.version` to check what EMC version you are running, you can type `.cinfo` to see what client is loaded.
+
 Installing a mod
 -------------------
 
