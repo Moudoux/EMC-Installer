@@ -94,6 +94,19 @@ public class App {
 				}
 				log("Applying patch file...");
 				App.applyPatch(original, patchfile, output);
+			} else if (args[0].equals("-n") || args[0].equals("--name")) {
+				if (args.length != 2) {
+					error("Invalid syntax, please use \"--apply <Source> <Patch file> <Output>\"");
+				}
+				clientName = args[1];
+				log("Installing EMC...");
+				new Thread() {
+					@Override
+					public void run() {
+						infoBox("Installing " + name + "...", "Installing...");
+					}
+				}.start();
+				install();
 			} else {
 				error("Unknown action \"" + args[0] + "\"");
 			}
@@ -211,6 +224,9 @@ public class App {
 			out.close();
 			return true;
 		} catch (Exception ex) {
+			if (output.exists()) {
+				output.delete();
+			}
 			return false;
 		}
 	}

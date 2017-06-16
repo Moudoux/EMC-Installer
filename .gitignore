@@ -1,6 +1,9 @@
 # Compiled class file
 *.class
 
+# Push files
+Update-git.bat
+
 # Log file
 *.log
 
