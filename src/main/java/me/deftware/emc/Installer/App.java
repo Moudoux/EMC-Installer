@@ -137,6 +137,16 @@ public class App {
 		clientDir.mkdir();
 		File clientFile = new File(clientDir.getAbsolutePath() + File.separator + mcVersion + ".jar");
 		App.copyFile(minecraft, clientFile);
+		// Apply initial patch
+		File iFile = new File(clientDir.getAbsolutePath() + File.separator + "init.patch");
+		if (extractAsset("/assets/init.patch", iFile)) {
+			File tmp = new File(clientDir.getAbsolutePath() + File.separator + mcVersion + "_PATCHED.jar");
+			App.applyPatch(clientFile, iFile, tmp);
+			System.exit(0);
+			clientFile.delete();
+			tmp.renameTo(clientFile);
+			iFile.delete();
+		}
 		// Apply patch
 		File pFile = new File(clientDir.getAbsolutePath() + File.separator + "emc.patch");
 		log("Downloading patch...");
