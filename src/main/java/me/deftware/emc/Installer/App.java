@@ -142,7 +142,6 @@ public class App {
 		if (extractAsset("/assets/init.patch", iFile)) {
 			File tmp = new File(clientDir.getAbsolutePath() + File.separator + mcVersion + "_PATCHED.jar");
 			App.applyPatch(clientFile, iFile, tmp);
-			System.exit(0);
 			clientFile.delete();
 			tmp.renameTo(clientFile);
 			iFile.delete();
