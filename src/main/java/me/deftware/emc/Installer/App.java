@@ -30,7 +30,7 @@ import me.deftware.emc.Installer.Patch.JBPatch;
 
 public class App {
 	
-	public static String name = "", mcVersion = "", clientName = "", targetPatch = "";
+	public static String name = "", mcVersion = "", display = "", clientName = "", targetPatch = "";
 
 	public static void log(String message) {
 		System.out.println("Installer >> " + message);
@@ -58,7 +58,8 @@ public class App {
 
 			name = jsonObject.get("name").getAsString();
 			mcVersion = jsonObject.get("mc_vesion").getAsString();
-			clientName = jsonObject.get("name").getAsString() + "_" + mcVersion;
+			display = jsonObject.get("display_version").getAsString();
+			clientName = jsonObject.get("name").getAsString() + "_" + display;
 			targetPatch = jsonObject.get("patch").getAsString();
 
 			if (mcVersion.equals("") || clientName.equals("") || targetPatch.equals("") || name.equals("")) {

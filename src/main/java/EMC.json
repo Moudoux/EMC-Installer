@@ -1,5 +1,6 @@
 {
     "name": "EMC",
     "mc_vesion": "1.12",
-    "patch": "1.12-8.patch"
+    "display_version": "1.12.1",
+    "patch": "1.12.1-10-OF.patch"
 }
