@@ -69,7 +69,7 @@ public class Installer extends JFrame {
 				String init = data.split(":")[0] + ".init";
 				String patch = data.split(":")[1];
 				String mcVersion = data.split(":")[0];
-				String clientName = Main.name;
+				String clientName = Main.name + "_" + data.split(":")[0];
 
 				File minecraft = Utils.getMinecraft(mcVersion);
 				// Copy Minecraft jar
@@ -127,7 +127,11 @@ public class Installer extends JFrame {
 				Utils.saveJson(jsonObject.toString(), clientFile);
 				// Optional: Install Client.jar
 				clientFile = new File(clientDir.getAbsolutePath() + File.separator + "Client.jar");
-				Utils.extractAsset("/assets/Client.jar", clientFile);
+				if (!Utils.extractAsset("/assets/Client.jar", clientFile)) {
+					if (clientFile.exists()) {
+						clientFile.delete();
+					}
+				}
 				pBar.updateBar(6);
 				Window w = SwingUtilities.getWindowAncestor(pBar);
 				w.setVisible(false);

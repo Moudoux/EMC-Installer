@@ -63,7 +63,7 @@ public class Utils {
 		return null;
 	}
 
-	public static boolean extractAsset(String asset, File output) throws InstallException {
+	public static boolean extractAsset(String asset, File output) {
 		try {
 			if (output.exists()) {
 				output.delete();
@@ -75,7 +75,7 @@ public class Utils {
 			out.close();
 			return true;
 		} catch (Exception ex) {
-			throw new InstallException("Could not extract Client.jar");
+			return false;
 		}
 	}
 
