@@ -132,6 +132,12 @@ public class Installer extends JFrame {
 						clientFile.delete();
 					}
 				}
+				// Install optional mods
+				for (JsonElement mod : Main.emcJson.get("mods").getAsJsonArray()) {
+					String name = mod.getAsString();
+					Utils.extractAsset("/assets/" + name,
+							new File(clientDir.getAbsolutePath() + File.separator + "mods" + File.separator + name));
+				}
 				pBar.updateBar(6);
 				Window w = SwingUtilities.getWindowAncestor(pBar);
 				w.setVisible(false);

@@ -18,6 +18,7 @@ public class Main {
 
 	public static final String versionsURL = "https://raw.githubusercontent.com/Moudoux/EMC-Installer/master/versions.json";
 	public static JsonObject versionsJson;
+	public static JsonObject emcJson;
 	public static String name;
 
 	public static void main(String[] args) {
@@ -59,8 +60,8 @@ public class Main {
 					result.append(line);
 				}
 				in.close();
-				JsonObject jsonObject = new Gson().fromJson(result.toString(), JsonObject.class);
-				name = jsonObject.get("name").getAsString();
+				emcJson = new Gson().fromJson(result.toString(), JsonObject.class);
+				name = emcJson.get("name").getAsString();
 			} catch (Exception ex) {
 				Utils.errorBox("Failed to read installer config", "Corrupt installer");
 				return;
