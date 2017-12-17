@@ -37,6 +37,7 @@ public class Installer extends JFrame {
 
 	public Installer(JsonObject json) {
 		this.versions = json.entrySet();
+		System.out.println(versions.toString());
 		String low = "", high = "";
 		for (Map.Entry<String, JsonElement> entry : versions) {
 			if (high.isEmpty()) {
@@ -66,6 +67,7 @@ public class Installer extends JFrame {
 						break;
 					}
 				}
+				System.out.println(data);
 				String init = data.split(":")[0] + ".init";
 				String patch = data.split(":")[1];
 				String mcVersion = data.split(":")[0];

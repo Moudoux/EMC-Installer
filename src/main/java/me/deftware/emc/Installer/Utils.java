@@ -81,6 +81,7 @@ public class Utils {
 
 	public static void getPatch(File output, String targetPatch) throws IOException {
 		URL url = new URL("https://github.com/Moudoux/EMC-Installer/blob/master/Patches/" + targetPatch + "?raw=true");
+		System.out.println("https://github.com/Moudoux/EMC-Installer/blob/master/Patches/" + targetPatch + "?raw=true");
 		FileUtils.copyURLToFile(url, output);
 	}
 
