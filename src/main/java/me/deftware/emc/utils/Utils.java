@@ -1,4 +1,4 @@
-package me.deftware.emc.Installer;
+package me.deftware.emc.utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
 import javax.swing.JOptionPane;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
@@ -21,8 +19,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import me.deftware.emc.Installer.Patch.JBDiff;
-import me.deftware.emc.Installer.Patch.JBPatch;
+import me.deftware.emc.Installer.Main;
 
 public class Utils {
 
@@ -79,15 +76,18 @@ public class Utils {
 		}
 	}
 
-	public static void getPatch(File output, String targetPatch) throws IOException {
-		URL url = new URL("https://github.com/Moudoux/EMC-Installer/blob/master/Patches/" + targetPatch + "?raw=true");
-		System.out.println("https://github.com/Moudoux/EMC-Installer/blob/master/Patches/" + targetPatch + "?raw=true");
-		FileUtils.copyURLToFile(url, output);
-	}
-
-	public static void getInit(File output, String targetPatch) throws IOException {
-		URL url = new URL("https://github.com/Moudoux/EMC-Installer/blob/master/init/" + targetPatch + "?raw=true");
-		FileUtils.copyURLToFile(url, output);
+	public static String getMinecraftRoot() {
+		if (OSUtils.isWindows()) {
+			return System.getenv("APPDATA") + File.separator + ".minecraft" + File.separator;
+		} else if (OSUtils.isLinux()) {
+			return System.getProperty("user.home") + File.separator + ".minecraft" + File.separator;
+		} else if (OSUtils.isMac()) {
+			return System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support"
+					+ File.separator + "minecraft" + File.separator;
+		} else {
+			error("Unsupported OS, please use Windows, macOS or Linux");
+		}
+		return "";
 	}
 
 	public static File getMinecraft(String mcVersion) {
@@ -126,31 +126,6 @@ public class Utils {
 
 	public static void errorBox(String infoMessage, String titleBar) {
 		JOptionPane.showMessageDialog(null, infoMessage, "Error: " + titleBar, JOptionPane.ERROR_MESSAGE);
-	}
-
-	/*
-	 * Patching/Gen
-	 */
-
-	public static void genPatch(File minecraft, File modifiedMinecraft, File output) {
-		try {
-			JBDiff.bsdiff(minecraft, modifiedMinecraft, output);
-			log("Done, file saved to " + output.getAbsolutePath());
-		} catch (Exception ex) {
-			log("Failed to generate patch file");
-			ex.printStackTrace();
-			System.exit(0);
-		}
-	}
-
-	public static void applyPatch(File minecraft, File patchFile, File output) {
-		try {
-			JBPatch.bspatch(minecraft, output, patchFile);
-		} catch (Exception ex) {
-			log("Failed to apply patch file");
-			ex.printStackTrace();
-			System.exit(0);
-		}
 	}
 
 }

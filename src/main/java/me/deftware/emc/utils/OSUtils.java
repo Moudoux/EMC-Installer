@@ -1,4 +1,4 @@
-package me.deftware.emc.Installer;
+package me.deftware.emc.utils;
 
 public class OSUtils {
 
