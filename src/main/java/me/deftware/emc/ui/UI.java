@@ -127,6 +127,11 @@ public class UI extends JFrame {
 				} else {
 					String link = "https://github.com/Moudoux/EMC/raw/master/maven/me/deftware/EMC-Forge/"
 							+ data.split(",")[0] + "/EMC-Forge-" + data.split(",")[0] + "-full.jar";
+					File modFolder = new File(
+							Utils.getMinecraftRoot() + "mods" + File.separator + mcVersion + File.separator);
+					if (!modFolder.exists()) {
+						modFolder.mkdirs();
+					}
 					WebUtils.download(link, Utils.getMinecraftRoot() + "mods" + File.separator + mcVersion
 							+ File.separator + "EMC.jar");
 					pBar.updateBar(5);
@@ -181,7 +186,7 @@ public class UI extends JFrame {
 
 	private void initGui() {
 		this.setResizable(true);
-		this.setBounds(100, 100, 495, 360);
+		this.setBounds(100, 100, 495, 341);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
 		this.setDefaultCloseOperation(3);
@@ -256,7 +261,7 @@ public class UI extends JFrame {
 		GridBagConstraints gbc_panel_3 = new GridBagConstraints();
 		gbc_panel_3.fill = 2;
 		gbc_panel_3.anchor = 20;
-		gbc_panel_3.insets = new Insets(0, 0, 20, 0);
+		gbc_panel_3.insets = new Insets(0, 0, 15, 0);
 		gbc_panel_3.gridx = 0;
 		gbc_panel_3.gridy = 4;
 		panel.add(panel_3, gbc_panel_3);
@@ -271,8 +276,6 @@ public class UI extends JFrame {
 
 		final JPanel panel_2 = new JPanel();
 		final GridBagConstraints gbc_panel_2 = new GridBagConstraints();
-		gbc_panel_2.gridheight = 6;
-		gbc_panel_2.insets = new Insets(0, 0, 5, 0);
 		gbc_panel_2.anchor = 15;
 		gbc_panel_2.fill = 2;
 		gbc_panel_2.gridx = 0;
