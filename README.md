@@ -12,12 +12,12 @@ Run it with `java -jar Installer.jar`, after that open your Minecraft launcher a
 Making sure the installation was successful
 -------------------
 
-You can type `.version` to check what EMC version you are running, you can type `.mods` to see what client is loaded.
+You can type `.version` to check what EMC version you are running, you can type `.mods` to see which mods are loaded.
 
 Installing a mod
 -------------------
 
-To install a mod made for [EMC framework](https://github.com/Moudoux/EMC) simply drag and drop the mod jar file in 
+To install a mod made for the [EMC framework](https://github.com/Moudoux/EMC) simply drag and drop the mod jar file in 
 `.minecraft/libraries/EMC/`.
 
 Building and bundling mods
