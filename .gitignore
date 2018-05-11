@@ -1,34 +1,9 @@
-# Compiled class file
-*.class
-
-# Push files
-Update-git.bat
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-*.zip
-*.tar.gz
-*.rar
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-
-# eclipse
-.classpath
-.project
-.settings/
-/bin/
-
-# maven
-/target/
+/*
+!/.gitignore
+!/src
+!/gradle
+!/Patches
+!/init
+!/README.md
+!/build.gradle
+!/versions.json
