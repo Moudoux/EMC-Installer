@@ -1,7 +1,7 @@
 The EMC (Easy Minecraft Client) Framework installer 
 ===================
 
-This is a installer for the [EMC framework](https://github.com/Moudoux/EMC)
+This is an installer for the [EMC framework](https://github.com/Moudoux/EMC)
 
 Using the installer
 -------------------
