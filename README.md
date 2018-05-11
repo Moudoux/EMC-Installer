@@ -1,6 +1,5 @@
 The EMC (Easy Minecraft Client) Framework installer 
 ===================
-[![](https://jitpack.io/v/Moudoux/EMC-Installer.svg)](https://jitpack.io/#Moudoux/EMC-Installer)
 
 This is a installer for the [EMC framework](https://github.com/Moudoux/EMC)
 
