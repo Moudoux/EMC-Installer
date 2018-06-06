@@ -1,6 +1,14 @@
 The EMC (Easy Minecraft Client) Framework installer 
 ===================
 
+Moved to GitLab
+-------------------
+
+EMC has moved to GitLab, at [https://gitlab.com/EMC-Framework/EMC-Installer](https://gitlab.com/EMC-Framework/EMC-Installer)
+
+About
+-------------------
+
 This is an installer for the [EMC framework](https://github.com/Moudoux/EMC)
 
 Using the installer
